@@ -1,0 +1,12 @@
+body {
+    background-color: #efefef;
+}
+
+.main {
+    margin: 30px;
+}
+
+.submit-bottom {
+    float: right;
+    margin-bottom: 15px;
+}
