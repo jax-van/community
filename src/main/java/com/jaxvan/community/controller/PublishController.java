@@ -36,13 +36,17 @@ public class PublishController {
             Model model) {
         model.addAttribute("title", title);
         model.addAttribute("description", description);
-        System.out.println(description);
         model.addAttribute("tag", tag);
         if (title == null || title.length() == 0) {
             model.addAttribute("error", "标题不能为空");
             return "publish";
         }
+        if (description == null || description.length() == 0) {
+            model.addAttribute("error", "描述内容不能为空");
+            return "publish";
+        }
 
+        // 从cookie中拿到token，用来查到user
         User user = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
@@ -60,11 +64,11 @@ public class PublishController {
             return "publish";
         }
         Question question = new Question();
-        question.setTag(title);
-        question.setTag(description);
+        question.setTitle(title);
+        question.setDescription(description);
         question.setTag(tag);
-        question.setGmtCreate(System.currentTimeMillis());
         question.setCreator(user.getId());
+        question.setGmtCreate(System.currentTimeMillis());
         question.setGmtModified(question.getGmtCreate());
         questionMapper.create(question);
         return "redirect:/";
