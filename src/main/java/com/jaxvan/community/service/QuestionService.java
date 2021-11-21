@@ -1,5 +1,6 @@
 package com.jaxvan.community.service;
 
+import com.jaxvan.community.dto.PaginationDTO;
 import com.jaxvan.community.dto.QuestionDTO;
 import com.jaxvan.community.mapper.QuestionMapper;
 import com.jaxvan.community.mapper.UserMapper;
@@ -20,8 +21,8 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<QuestionDTO> list() {
-        List<Question> questionList = questionMapper.list();
+    public PaginationDTO list(Integer pageNum, Integer pageSize) {
+        List<Question> questionList = questionMapper.list(pageSize, (pageNum - 1) * pageSize);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questionList) {
             User user = userMapper.findById(question.getCreator());
@@ -30,6 +31,10 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        return questionDTOList;
+        PaginationDTO paginationDTO = new PaginationDTO();
+        paginationDTO.setQuestions(questionDTOList);
+        Integer count = questionMapper.count();
+        paginationDTO.setPagination(count, pageNum, pageSize);
+        return paginationDTO;
     }
 }

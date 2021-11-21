@@ -22,3 +22,7 @@ body {
     font-weight: normal;
     color: #999;
 }
+
+.alert-fix {
+    margin-top: 21px;
+}
