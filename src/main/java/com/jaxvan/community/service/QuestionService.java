@@ -21,8 +21,27 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public PaginationDTO list(Integer pageNum, Integer pageSize) {
-        List<Question> questionList = questionMapper.list(pageSize, (pageNum - 1) * pageSize);
+    public PaginationDTO listByUserId(Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+        // 设置分页并得到总页数好进一步调整
+        Integer totalCount = questionMapper.count();
+        paginationDTO.setPagination(totalCount, page, size);
+
+        // 越界调整
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > paginationDTO.getTotalPage()) {
+            page = paginationDTO.getTotalPage();
+        }
+        paginationDTO.setPage(page);
+
+        // 根据页码和页面大小获取QuestionDTO列表，并放入分页中
+        Integer offset = (page - 1) * size;
+        if (offset < 0) {
+            offset = 0;
+        }
+        List<Question> questionList = questionMapper.list(size, offset);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questionList) {
             User user = userMapper.findById(question.getCreator());
@@ -31,10 +50,40 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        PaginationDTO paginationDTO = new PaginationDTO();
         paginationDTO.setQuestions(questionDTOList);
-        Integer count = questionMapper.count();
-        paginationDTO.setPagination(count, pageNum, pageSize);
+        return paginationDTO;
+    }
+
+    public PaginationDTO listByUserId(Integer userId, Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+        // 设置分页并得到总页数好进一步调整
+        Integer totalCount = questionMapper.countByUserId(userId);
+        paginationDTO.setPagination(totalCount, page, size);
+
+        // 越界调整
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > paginationDTO.getTotalPage()) {
+            page = paginationDTO.getTotalPage();
+        }
+        paginationDTO.setPage(page);
+
+        // 根据页码和页面大小获取QuestionDTO列表，并放入分页中
+        Integer offset = (page - 1) * size;
+        if (offset < 0) {
+            offset = 0;
+        }
+        List<Question> questionList = questionMapper.listByUserId(userId, size, offset);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        for (Question question : questionList) {
+            User user = userMapper.findById(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question, questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        paginationDTO.setQuestions(questionDTOList);
         return paginationDTO;
     }
 }

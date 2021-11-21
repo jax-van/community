@@ -37,20 +37,20 @@
                         </a>
                     </li>
                     <li th:if="${pagination.showPrevious}">
-                        <a th:href="@{/(pn=${pagination.page-1})}" aria-label="Previous">
+                        <a th:href="@{/(page=${pagination.page - 1})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
-                    <li th:class="${num==pagination.page?'active':''}" th:each="num:${pagination.pages}">
-                        <a th:href="@{/(pn=${num})}">[[${num}]]</a>
+                    <li th:class="${num==pagination.page}? 'active'" th:each="num:${pagination.pages}">
+                        <a th:href="@{/(page=${num})}">[[${num}]]</a>
                     </li>
                     <li th:if="${pagination.showNext}">
-                        <a th:href="@{/(pn=${pagination.page+1})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagination.page + 1})}" aria-label="Next">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>
                     <li th:if="${pagination.showLastPage}">
-                        <a th:href="@{/(pn=${pagination.totalPage})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagination.totalPage})}" aria-label="Next">
                             <span aria-hidden="true">&gt;&gt;</span>
                         </a>
                     </li>
