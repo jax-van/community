@@ -37,7 +37,6 @@ public class AuthorizeController {
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
-                           HttpServletRequest request,
                            HttpServletResponse response) {
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
@@ -55,8 +54,6 @@ public class AuthorizeController {
             user.setAccountId(githubUser.getId().toString());
             user.setAvatarUrl(githubUser.getAvatarUrl());
             userService.createOrUpdateUser(user);
-            // 登录成功
-            //request.getSession().setAttribute("user", user);
             response.addCookie(new Cookie("token", token));
 
         } else {

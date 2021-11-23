@@ -38,6 +38,6 @@
             <!--<columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />-->
         </table>
         <table tableName="question" domainObjectName="Question"></table>
-
+        <table tableName="comment" domainObjectName="Comment"></table>
     </context>
 </generatorConfiguration>

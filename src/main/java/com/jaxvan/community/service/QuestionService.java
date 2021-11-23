@@ -2,6 +2,9 @@ package com.jaxvan.community.service;
 
 import com.jaxvan.community.dto.PaginationDTO;
 import com.jaxvan.community.dto.QuestionDTO;
+import com.jaxvan.community.exception.CustomizeErrorCode;
+import com.jaxvan.community.exception.CustomizeException;
+import com.jaxvan.community.mapper.QuestionExtMapper;
 import com.jaxvan.community.mapper.QuestionMapper;
 import com.jaxvan.community.mapper.UserMapper;
 import com.jaxvan.community.model.Question;
@@ -22,6 +25,9 @@ public class QuestionService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     public PaginationDTO list(Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
@@ -97,7 +103,11 @@ public class QuestionService {
 
     public QuestionDTO getById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
+
         BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
         questionDTO.setUser(user);
@@ -113,7 +123,14 @@ public class QuestionService {
         } else {
             // 修改
             question.setGmtModified(System.currentTimeMillis());
-            questionMapper.updateByPrimaryKeySelective(question);
+            int update = questionMapper.updateByPrimaryKeySelective(question);
+            if (update != 1) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
+    }
+
+    public void increaseViewByOne(Long id) {
+        questionExtMapper.increaseViewByOne(id);
     }
 }
