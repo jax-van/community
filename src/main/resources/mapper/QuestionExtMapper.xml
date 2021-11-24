@@ -19,10 +19,17 @@
     <result column="STICKY" jdbcType="INTEGER" property="sticky" />
   </resultMap>
 
-  <update id="increaseViewByOne" parameterType="long">
+  <update id="incrViewByOne" parameterType="long">
     update QUESTION
     set
     VIEW_COUNT = VIEW_COUNT + 1
+    where id = #{id}
+  </update>
+
+  <update id="incrCommentViewByOne" parameterType="long">
+    update QUESTION
+    set
+      COMMENT_COUNT = COMMENT_COUNT + 1
     where id = #{id}
   </update>
 </mapper>
