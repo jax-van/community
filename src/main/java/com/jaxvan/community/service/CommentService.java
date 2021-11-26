@@ -4,10 +4,7 @@ import com.jaxvan.community.dto.CommentDTO;
 import com.jaxvan.community.enums.CommentTypeEnum;
 import com.jaxvan.community.exception.CustomizeErrorCode;
 import com.jaxvan.community.exception.CustomizeException;
-import com.jaxvan.community.mapper.CommentMapper;
-import com.jaxvan.community.mapper.QuestionExtMapper;
-import com.jaxvan.community.mapper.QuestionMapper;
-import com.jaxvan.community.mapper.UserMapper;
+import com.jaxvan.community.mapper.*;
 import com.jaxvan.community.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,9 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CommentExtMapper commentExtMapper;
+
     @Transactional
     public void insert(Comment comment) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
@@ -51,7 +51,8 @@ public class CommentService {
             if (dbComment == null) {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             } else {
-                commentMapper.insert(comment);
+                commentMapper.insertSelective(comment);
+                commentExtMapper.incrCommentCountByOne(comment.getParentId());
             }
         } else {
             // 回复问题
@@ -59,8 +60,8 @@ public class CommentService {
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
-            commentMapper.insert(comment);
-            questionExtMapper.incrCommentViewByOne(question.getId());
+            commentMapper.insertSelective(comment);
+            questionExtMapper.incrCommentCountByOne(comment.getParentId());
         }
     }
 

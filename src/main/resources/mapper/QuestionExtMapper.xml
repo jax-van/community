@@ -26,10 +26,23 @@
     where id = #{id}
   </update>
 
-  <update id="incrCommentViewByOne" parameterType="long">
+  <update id="incrCommentCountByOne" parameterType="long">
     update QUESTION
     set
       COMMENT_COUNT = COMMENT_COUNT + 1
     where id = #{id}
   </update>
+
+  <select id="selectRelated" parameterType="com.jaxvan.community.model.Question" resultMap="BaseResultMap">
+    select * from QUESTION
+    <where>
+      <if test="id != null">
+        and id != #{id}
+      </if>
+      <if test="tag != null and tag != ''">
+        and tag regexp #{tag}
+      </if>
+    </where>
+    order by gmt_create desc limit 20
+  </select>
 </mapper>

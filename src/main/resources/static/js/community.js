@@ -43,8 +43,52 @@ function comment2question() {
     comment2parent(questionId, 1, content);
 }
 
-function comment2comment() {
-    let questionId = $("#question_id").val();
-    let content = $("#comment_content").val();
-    comment2parent(questionId, 1, content);
+function comment2comment(e) {
+    let commentId = e.getAttribute("data-id");
+    let content = $("#input-" + commentId).val();
+    comment2parent(commentId, 2, content);
+}
+
+function getSubComments(e) {
+    $(e).toggleClass("active");
+    debugger
+    let id = e.getAttribute("data-id");
+    let subComments = $("#comment-" + id);
+    debugger
+    if (subComments.children().length == 1) {
+        $.getJSON("/comment/" + id, function (data) {
+            $.each(data.data.reverse(), function (index, comment) {
+                let mediaLeftElement = $("<div/>", {
+                    "class": "media-left"
+                }).append($("<img/>", {
+                    "class": "media-object img-rounded",
+                    "src": comment.user.avatarUrl
+                }));
+
+                let mediaBodyElement = $("<div/>", {
+                    "class": "media-body"
+                }).append($("<h5/>", {
+                    "class": "media-heading",
+                    "html": comment.user.name
+                })).append($("<div/>", {
+                    "html": comment.content
+                })).append($("<div/>", {
+                    "class": "menu"
+                }).append($("<span/>", {
+                    "class": "pull-right",
+                    "html": moment(comment.gmtCreate).format('YYYY-MM-DD')
+                })));
+
+                let mediaElement = $("<div/>", {
+                    "class": "media"
+                }).append(mediaLeftElement).append(mediaBodyElement);
+
+                let commentElement = $("<div/>", {
+                    "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comments"
+                }).append(mediaElement);
+
+                subComments.prepend(commentElement);
+            });
+        });
+    }
 }

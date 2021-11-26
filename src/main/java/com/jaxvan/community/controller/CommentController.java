@@ -10,20 +10,18 @@ import com.jaxvan.community.model.User;
 import com.jaxvan.community.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Controller
+@RestController
 public class CommentController {
 
     @Autowired
     private CommentService commentService;
 
-    @ResponseBody
-    @RequestMapping(value = "/comment", method = RequestMethod.POST)
+    @PostMapping(value = "/comment")
     public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
                        HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -44,8 +42,7 @@ public class CommentController {
         return ResponseDTO.okOf();
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    @GetMapping("/comment/{id}")
     public ResponseDTO comments(@PathVariable("id") Long id) {
         List<CommentDTO> commentDTOS =
                 commentService.listByParentId(id, CommentTypeEnum.COMMENT);

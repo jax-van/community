@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -49,7 +50,9 @@ public class QuestionService {
         if (offset < 0) {
             offset = 0;
         }
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(null, new RowBounds(offset, size));
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -135,5 +138,19 @@ public class QuestionService {
 
     public void increaseViewByOne(Long id) {
         questionExtMapper.incrViewByOne(id);
+    }
+
+    public List<QuestionDTO> selectRelate(QuestionDTO questionDTO) {
+        String tag = questionDTO.getTag().replace(',', '|');
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(tag);
+        List<Question> questions = questionExtMapper.selectRelated(question);
+        List<QuestionDTO> questionDTOS = questions.stream().map(q -> {
+            QuestionDTO ret = new QuestionDTO();
+            BeanUtils.copyProperties(q, ret);
+            return ret;
+        }).collect(Collectors.toList());
+        return questionDTOS;
     }
 }
