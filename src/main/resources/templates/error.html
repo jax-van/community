@@ -15,8 +15,8 @@
 <div class="jumbotron">
     <h1>出错啦！！！</h1>
     <p th:text="${message}">未知异常，请稍后在访问</p>
-    <p><a class="btn btn-primary btn-lg" href="/" role="button">回到主页[[${message1}]]</a></p>
-
+    <p><a class="btn btn-primary btn-lg" href="/" role="button">回到主页</a></p>
 </div>
+<div th:replace="footer :: footer"></div>
 </body>
 </html>

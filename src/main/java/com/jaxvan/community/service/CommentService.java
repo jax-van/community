@@ -72,7 +72,10 @@ public class CommentService {
     }
 
     private void createNotification(User commentator, Comment parentComment) {
-
+        // 回复人是自己则不创建通知
+        if (commentator.getId() == parentComment.getCommentator()) {
+            return;
+        }
         Notification notification = new Notification();
         notification.setNotifierName(commentator.getName());
         notification.setGmtCreate(System.currentTimeMillis());
@@ -86,6 +89,10 @@ public class CommentService {
     }
 
     private void createNotification(User commentator, Question question) {
+        // 回复人是自己则不创建通知
+        if (commentator.getId() == question.getCreator()) {
+            return;
+        }
         Notification notification = new Notification();
         notification.setNotifierName(commentator.getName());
         notification.setGmtCreate(System.currentTimeMillis());
@@ -106,11 +113,12 @@ public class CommentService {
         // 按时间倒叙排列
         example.setOrderByClause("gmt_create desc");
         List<Comment> comments = commentMapper.selectByExample(example);
+
         if (comments.size() == 0) {
             return new ArrayList<>();
         }
-        // 流操作 lambda表达式 函数式编程
 
+        // 流操作 lambda表达式 函数式编程
         // 获取去重评论人并转化为 List
         Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
         ArrayList<Long> userIds = new ArrayList<>(commentators);

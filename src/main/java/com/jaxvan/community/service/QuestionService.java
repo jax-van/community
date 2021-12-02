@@ -2,6 +2,7 @@ package com.jaxvan.community.service;
 
 import com.jaxvan.community.dto.PaginationDTO;
 import com.jaxvan.community.dto.QuestionDTO;
+import com.jaxvan.community.dto.QuestionQueryDTO;
 import com.jaxvan.community.exception.CustomizeErrorCode;
 import com.jaxvan.community.exception.CustomizeException;
 import com.jaxvan.community.mapper.QuestionExtMapper;
@@ -10,12 +11,14 @@ import com.jaxvan.community.mapper.UserMapper;
 import com.jaxvan.community.model.Question;
 import com.jaxvan.community.model.QuestionExample;
 import com.jaxvan.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,10 +33,17 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size) {
+        if (StringUtils.isNotBlank(search)) {
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
         PaginationDTO paginationDTO = new PaginationDTO();
         // 设置分页并得到总页数好进一步调整
-        Integer totalCount = (int) questionMapper.countByExample(null);
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         paginationDTO.setPagination(totalCount, page, size);
 
         // 越界调整
@@ -50,9 +60,10 @@ public class QuestionService {
         if (offset < 0) {
             offset = 0;
         }
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+
+        questionQueryDTO.setOffset(offset);
+        questionQueryDTO.setSize(size);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());

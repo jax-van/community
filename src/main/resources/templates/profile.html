@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>[[${sectionName}]]</title>
+    <title th:text="${sectionName}"></title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
@@ -62,7 +62,7 @@
                         </a>
                     </li>
                     <li th:class="${num==pagination.page}? 'active'" th:each="num:${pagination.pages}">
-                        <a th:href="@{'/profile/' + ${section}(page=${num})}">[[${num}]]</a>
+                        <a th:href="@{'/profile/' + ${section}(page=${num})}" th:text="${num}"></a>
                     </li>
                     <li th:if="${pagination.showNext}">
                         <a th:href="@{'/profile/' + ${section}(page=${pagination.page + 1})}" aria-label="Next">
@@ -90,5 +90,6 @@
         </div>
     </div>
 </div>
+<div th:replace="footer :: footer"></div>
 </body>
 </html>
