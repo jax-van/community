@@ -1,4 +1,4 @@
-package com.jaxvan.community.config;
+package com.jaxvan.community.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

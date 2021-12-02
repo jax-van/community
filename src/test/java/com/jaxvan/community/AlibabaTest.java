@@ -1,4 +1,4 @@
-package com.jaxvan.community.test;
+package com.jaxvan.community;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;

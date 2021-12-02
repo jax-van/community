@@ -1,4 +1,4 @@
-package com.jaxvan.community.config;
+package com.jaxvan.community.interceptor;
 
 import com.jaxvan.community.mapper.UserMapper;
 import com.jaxvan.community.model.User;
