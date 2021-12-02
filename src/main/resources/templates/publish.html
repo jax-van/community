@@ -9,10 +9,12 @@
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/community.js"></script>
+    <link rel="stylesheet" href="/css/editormd.min.css">
+    <script src="/js/editormd.min.js"></script>
 </head>
 <body>
 
-<div th:insert="common :: nav"></div>
+<div th:insert="navigation :: nav"></div>
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-xs-12">
@@ -25,12 +27,26 @@
                     <input type="text" class="form-control" id="title" name="title"
                            placeholder="写下你的问题..." th:value="${title}" autocomplete="off">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="question-editor">
                     <label for="description">问题补充</label>
-                    <textarea name="description" class="form-control" id="description"
-                              cols="30" rows="10" placeholder="写下你的问题..."
+                    <textarea name="description" style="display:none;" class="form-control"
+                              id="description" cols="30" rows="10"
                               th:text="${description}" autocomplete="off"></textarea>
                 </div>
+                <script type="text/javascript">
+                    $(function () {
+                        editormd("question-editor", {
+                            width: "100%",
+                            height: 350,
+                            path: "/js/lib/",
+                            delay: 0,
+                            placeholder: "输入问题描述",
+                            imageUpload: true,
+                            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                            imageUploadURL: "/file/upload"
+                        });
+                    });
+                </script>
                 <!--标签输入框-->
                 <div class="form-group">
                     <label for="tag">添加标签</label>

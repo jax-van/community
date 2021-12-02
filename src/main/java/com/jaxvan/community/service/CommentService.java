@@ -2,6 +2,8 @@ package com.jaxvan.community.service;
 
 import com.jaxvan.community.dto.CommentDTO;
 import com.jaxvan.community.enums.CommentTypeEnum;
+import com.jaxvan.community.enums.NotificationStatusEnum;
+import com.jaxvan.community.enums.NotificationTypeEnum;
 import com.jaxvan.community.exception.CustomizeErrorCode;
 import com.jaxvan.community.exception.CustomizeException;
 import com.jaxvan.community.mapper.*;
@@ -11,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,8 +34,11 @@ public class CommentService {
     @Autowired
     private CommentExtMapper commentExtMapper;
 
+    @Autowired
+    private NotificationMapper notificationMapper;
+
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentator) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
@@ -47,13 +49,15 @@ public class CommentService {
 
         if (comment.getType() == CommentTypeEnum.COMMENT.getType()) {
             // 回复评论
-            Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
-            if (dbComment == null) {
+            Comment parentComment = commentMapper.selectByPrimaryKey(comment.getParentId());
+            if (parentComment == null) {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
-            } else {
-                commentMapper.insertSelective(comment);
-                commentExtMapper.incrCommentCountByOne(comment.getParentId());
             }
+            // 插入评论平使得评论数加一
+            commentMapper.insertSelective(comment);
+            commentExtMapper.incrCommentCountByOne(comment.getParentId());
+            // 创建通知
+            createNotification(commentator, parentComment);
         } else {
             // 回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -62,7 +66,36 @@ public class CommentService {
             }
             commentMapper.insertSelective(comment);
             questionExtMapper.incrCommentCountByOne(comment.getParentId());
+            // 建立通知
+            createNotification(commentator, question);
         }
+    }
+
+    private void createNotification(User commentator, Comment parentComment) {
+
+        Notification notification = new Notification();
+        notification.setNotifierName(commentator.getName());
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setNotifier(commentator.getId());
+        notification.setType(NotificationTypeEnum.REPLY_COMMENT.getType());
+        notification.setOuterId(parentComment.getParentId());
+        notification.setOuterTitle(parentComment.getContent());
+        notification.setReceiver(parentComment.getCommentator());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notificationMapper.insertSelective(notification);
+    }
+
+    private void createNotification(User commentator, Question question) {
+        Notification notification = new Notification();
+        notification.setNotifierName(commentator.getName());
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setNotifier(commentator.getId());
+        notification.setType(NotificationTypeEnum.REPLY_QUESTION.getType());
+        notification.setOuterId(question.getId());
+        notification.setOuterTitle(question.getTitle());
+        notification.setReceiver(question.getCreator());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notificationMapper.insertSelective(notification);
     }
 
     public List<CommentDTO> listByParentId(Long id, CommentTypeEnum commentTypeEnum) {

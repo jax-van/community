@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaxvan.community.mapper.NotificationMapper">
+  <resultMap id="BaseResultMap" type="com.jaxvan.community.model.Notification">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="NOTIFIER" jdbcType="BIGINT" property="notifier" />
+    <result column="RECEIVER" jdbcType="BIGINT" property="receiver" />
+    <result column="OUTER_ID" jdbcType="BIGINT" property="outerId" />
+    <result column="TYPE" jdbcType="INTEGER" property="type" />
+    <result column="GMT_CREATE" jdbcType="BIGINT" property="gmtCreate" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="NOTIFIER_NAME" jdbcType="VARCHAR" property="notifierName" />
+    <result column="OUTER_TITLE" jdbcType="VARCHAR" property="outerTitle" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    ID, NOTIFIER, RECEIVER, OUTER_ID, TYPE, GMT_CREATE, STATUS, NOTIFIER_NAME, OUTER_TITLE
+  </sql>
+  <select id="selectByExample" parameterType="com.jaxvan.community.model.NotificationExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from NOTIFICATION
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from NOTIFICATION
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from NOTIFICATION
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jaxvan.community.model.NotificationExample">
+    delete from NOTIFICATION
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jaxvan.community.model.Notification">
+    insert into NOTIFICATION (ID, NOTIFIER, RECEIVER, 
+      OUTER_ID, TYPE, GMT_CREATE, 
+      STATUS, NOTIFIER_NAME, OUTER_TITLE
+      )
+    values (#{id,jdbcType=BIGINT}, #{notifier,jdbcType=BIGINT}, #{receiver,jdbcType=BIGINT}, 
+      #{outerId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{gmtCreate,jdbcType=BIGINT}, 
+      #{status,jdbcType=INTEGER}, #{notifierName,jdbcType=VARCHAR}, #{outerTitle,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jaxvan.community.model.Notification">
+    insert into NOTIFICATION
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="notifier != null">
+        NOTIFIER,
+      </if>
+      <if test="receiver != null">
+        RECEIVER,
+      </if>
+      <if test="outerId != null">
+        OUTER_ID,
+      </if>
+      <if test="type != null">
+        TYPE,
+      </if>
+      <if test="gmtCreate != null">
+        GMT_CREATE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="notifierName != null">
+        NOTIFIER_NAME,
+      </if>
+      <if test="outerTitle != null">
+        OUTER_TITLE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="notifier != null">
+        #{notifier,jdbcType=BIGINT},
+      </if>
+      <if test="receiver != null">
+        #{receiver,jdbcType=BIGINT},
+      </if>
+      <if test="outerId != null">
+        #{outerId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="notifierName != null">
+        #{notifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="outerTitle != null">
+        #{outerTitle,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jaxvan.community.model.NotificationExample" resultType="java.lang.Long">
+    select count(*) from NOTIFICATION
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update NOTIFICATION
+    <set>
+      <if test="record.id != null">
+        ID = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.notifier != null">
+        NOTIFIER = #{record.notifier,jdbcType=BIGINT},
+      </if>
+      <if test="record.receiver != null">
+        RECEIVER = #{record.receiver,jdbcType=BIGINT},
+      </if>
+      <if test="record.outerId != null">
+        OUTER_ID = #{record.outerId,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null">
+        TYPE = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.gmtCreate != null">
+        GMT_CREATE = #{record.gmtCreate,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        STATUS = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.notifierName != null">
+        NOTIFIER_NAME = #{record.notifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outerTitle != null">
+        OUTER_TITLE = #{record.outerTitle,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update NOTIFICATION
+    set ID = #{record.id,jdbcType=BIGINT},
+      NOTIFIER = #{record.notifier,jdbcType=BIGINT},
+      RECEIVER = #{record.receiver,jdbcType=BIGINT},
+      OUTER_ID = #{record.outerId,jdbcType=BIGINT},
+      TYPE = #{record.type,jdbcType=INTEGER},
+      GMT_CREATE = #{record.gmtCreate,jdbcType=BIGINT},
+      STATUS = #{record.status,jdbcType=INTEGER},
+      NOTIFIER_NAME = #{record.notifierName,jdbcType=VARCHAR},
+      OUTER_TITLE = #{record.outerTitle,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jaxvan.community.model.Notification">
+    update NOTIFICATION
+    <set>
+      <if test="notifier != null">
+        NOTIFIER = #{notifier,jdbcType=BIGINT},
+      </if>
+      <if test="receiver != null">
+        RECEIVER = #{receiver,jdbcType=BIGINT},
+      </if>
+      <if test="outerId != null">
+        OUTER_ID = #{outerId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        TYPE = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null">
+        GMT_CREATE = #{gmtCreate,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="notifierName != null">
+        NOTIFIER_NAME = #{notifierName,jdbcType=VARCHAR},
+      </if>
+      <if test="outerTitle != null">
+        OUTER_TITLE = #{outerTitle,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jaxvan.community.model.Notification">
+    update NOTIFICATION
+    set NOTIFIER = #{notifier,jdbcType=BIGINT},
+      RECEIVER = #{receiver,jdbcType=BIGINT},
+      OUTER_ID = #{outerId,jdbcType=BIGINT},
+      TYPE = #{type,jdbcType=INTEGER},
+      GMT_CREATE = #{gmtCreate,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=INTEGER},
+      NOTIFIER_NAME = #{notifierName,jdbcType=VARCHAR},
+      OUTER_TITLE = #{outerTitle,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.jaxvan.community.model.NotificationExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from NOTIFICATION
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

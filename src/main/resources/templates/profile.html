@@ -11,13 +11,15 @@
 </head>
 <body>
 
-<div th:insert="common :: nav"></div>
+<div th:insert="navigation :: nav"></div>
 <div class="container-fluid main profile">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-xs-12">
-            <h2>[[${sectionName}]]</h2>
+        <div class="col-md-9 col-md-12 col-xs-12">
+            <h2 th:text="${sectionName}"></h2>
             <hr>
-            <div class="media" th:each="question : ${pagination.questions}">
+            <div class="media"
+                 th:if="${section == 'questions'}"
+                 th:each="question : ${pagination.data}">
                 <div class="media-left">
                     <a href="#">
                         <img class="media-object img-rounded" th:src="${question.user.avatarUrl}">
@@ -26,17 +28,27 @@
                 <div class="media-body">
                     <h4 class="media-heading" th:text="${question.title}"></h4>
                     <span th:text="${question.description}"></span><br>
-                    <span class="text-desc">[[${question.commentCount}]]个回复 •
-                        [[${question.viewCount}]]次浏览 •
-                        [[${#dates.format(question.gmtCreate, 'yyyy-MM-dd HH:mm')}]]</span>
-
-                        <a th:href="@{'/publish/' + ${question.id}}" class="community-menu">
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                            编辑
-                        </a>
-
+                    <span class="text-desc">
+                        <span th:text="${question.commentCount}"></span>个回复 •
+                        <span th:text="${question.viewCount}"></span>次浏览 •
+                        <span th:text="${#dates.format(question.gmtCreate, 'yyyy-MM-dd HH:mm')}"></span>
+                    </span>
+                    <a th:href="@{'/publish/' + ${question.id}}" class="community-menu">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        编辑
+                    </a>
                 </div>
             </div>
+            <div class="media"
+                 th:if="${section == 'replies'}"
+                 th:each="notification : ${pagination.data}">
+                <a th:text="${notification.notifierName}"></a>
+                <span th:text="${notification.typeName}"></span>
+                <a th:href="@{'/notification/' + ${notification.id}}"
+                   th:text="${notification.outerTitle}"></a>
+                <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
+            </div>
+            <!--分页-->
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <li th:if="${pagination.showFirstPage}">
@@ -72,7 +84,7 @@
                 </a>
                 <a href="/profile/replies" class="list-group-item" th:classappend="${section=='replies'}?'active'">
                     最新回复
-                    <span class="badge">14</span>
+                    <span class="badge" th:text="${session.unreadCount}"></span>
                 </a>
             </div>
         </div>
