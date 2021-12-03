@@ -5,6 +5,7 @@ import com.jaxvan.community.model.User;
 import com.jaxvan.community.model.UserExample;
 import com.jaxvan.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,9 +25,14 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
     private NotificationService notificationService;
 
+    @Value("${github.redirect.uri}")
+    private String githubRedirectUri;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 从cookie中拿到token，用来查到user
+        // 设置 context 级别的属性
+        request.getServletContext().setAttribute("githubRedirectUri", githubRedirectUri);
+        // 从 cookie 中拿到 token ，用来查到 user
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
