@@ -16,6 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -69,10 +70,16 @@
             <version>1.2.57</version>
         </dependency>
 
+        <!--<dependency>-->
+        <!--    <groupId>com.h2database</groupId>-->
+        <!--    <artifactId>h2</artifactId>-->
+        <!--    <version>1.4.199</version>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.199</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.45</version>
         </dependency>
 
         <dependency>
@@ -106,16 +113,24 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.2.4</version>
                 <configuration>
-                    <url>jdbc:h2:~/community</url>
-                    <user>sa</user>
+                    <url>jdbc:mysql://localhost:3306/community?useSSL=false</url>
+                    <user>root</user>
                     <password>123</password>
+                    <!--<url>jdbc:h2:~/community</url>-->
+                    <!--<user>sa</user>-->
+                    <!--<password>123</password>-->
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <version>1.4.199</version>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.45</version>
                     </dependency>
+                    <!--<dependency>-->
+                    <!--    <groupId>com.h2database</groupId>-->
+                    <!--    <artifactId>h2</artifactId>-->
+                    <!--    <version>1.4.199</version>-->
+                    <!--</dependency>-->
                 </dependencies>
             </plugin>
             <plugin>
@@ -124,10 +139,15 @@
                 <version>1.3.7</version>
                 <dependencies>
                     <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <version>1.4.199</version>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.45</version>
                     </dependency>
+                    <!--<dependency>-->
+                    <!--    <groupId>com.h2database</groupId>-->
+                    <!--    <artifactId>h2</artifactId>-->
+                    <!--    <version>1.4.199</version>-->
+                    <!--</dependency>-->
                 </dependencies>
             </plugin>
         </plugins>
