@@ -3,20 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>问答社区</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="/css/community.css">
-    <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        window.onload = function () {
-            let closable = window.localStorage.getItem("closable");
-            if (closable == "true") {
-                window.close();
-                window.localStorage.removeItem("closable");
-            }
-        }
-    </script>
+    <head th:insert="import :: head"></head>
 </head>
 <body>
 
@@ -37,7 +24,6 @@
                         <a th:href="@{'/question/' + ${question.id}}"
                            th:text="${question.title}"></a>
                     </h4>
-                    <span th:text="${question.description}"></span><br>
                     <span class="text-desc">
                         <span th:text="${question.commentCount}+'个回复 • '"></span>
                         <span th:text="${question.viewCount}+'次浏览 • '"></span>
@@ -74,8 +60,13 @@
             </nav>
         </div>
         <div class="col-lg-3 col-md-12 col-xs-12">
-            <h3>最新话题</h3>
-            <a href="https://www.baidu.com">百度</a>
+            <div th:replace="notice :: notice"></div>
+            <div class="col-lg-12 col-md-12 col-xs-12">
+                <h4>热门标签</h4>
+                <a th:each="hotTag : ${hotTags}" th:href="@{/(search=${search},tag=${hotTag})}"
+                   th:text="${hotTag}" class="community-tag"></a>
+            </div>
+
         </div>
     </div>
 </div>

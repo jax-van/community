@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,7 +123,8 @@ public class CommentService {
 
         // 流操作 lambda表达式 函数式编程
         // 获取去重评论人并转化为 List
-        Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
+        Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator())
+                .collect(Collectors.toSet());
         ArrayList<Long> userIds = new ArrayList<>(commentators);
 
         // 获取评论人并转换为 Map
@@ -128,15 +132,37 @@ public class CommentService {
         userExample.createCriteria()
                 .andIdIn(userIds);
         List<User> users = userMapper.selectByExample(userExample);
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
+        Map<Long, User> userMap = users.stream()
+                .collect(Collectors.toMap(user -> user.getId(), user -> user));
 
         // 转换 comment 为 commentDTO
-        List<CommentDTO> commentDTOs = comments.stream().map(comment -> {
+        List<CommentDTO> commentDTOs = new ArrayList<>();
+        for (Comment comment : comments) {
             CommentDTO commentDTO = new CommentDTO();
             BeanUtils.copyProperties(comment, commentDTO);
             commentDTO.setUser(userMap.get(comment.getCommentator()));
-            return commentDTO;
-        }).collect(Collectors.toList());
+            commentDTOs.add(commentDTO);
+        }
+        // 这时候用stream并没有简洁代码，反而没有增强for循环可读性高
+        //    List<CommentDTO> commentDTOs = comments.stream().map(comment -> {
+        //    CommentDTO commentDTO = new CommentDTO();
+        //    BeanUtils.copyProperties(comment, commentDTO);
+        //    commentDTO.setUser(userMap.get(comment.getCommentator()));
+        //    return commentDTO;
+        //}).collect(Collectors.toList());
         return commentDTOs;
+    }
+
+    public void incrLikeCount(Long id) {
+        Comment comment = new Comment();
+        if (id < 0) {
+            comment.setLikeCount(-1l);
+            id = -id;
+        } else {
+            comment.setLikeCount(1l);
+        }
+
+        comment.setId(id);
+        commentExtMapper.incrLikeCount(comment);
     }
 }

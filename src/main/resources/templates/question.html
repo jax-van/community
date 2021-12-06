@@ -3,15 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${question.title}"></title>
-    <link rel="stylesheet" href="/css/community.css">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
-
-    <script src="/js/jquery-3.6.0.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <head th:insert="import :: head"></head>
     <script src="/js/moment.js"></script>
-    <script src="/js/community.js"></script>
-
     <script src="/js/editormd.min.js"></script>
     <script src="/js/lib/marked.min.js"></script>
     <script src="/js/lib/prettify.min.js"></script>
@@ -81,8 +74,9 @@
                             <div th:text="${comment.content}"></div>
                             <!--评论操作菜单-->
                             <div class="menu">
-                                <button class="icon">
-                                    <span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;0
+                                <button class="icon" th:data-id="${comment.id}" onclick="giveALike(this)">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                                    <span th:text="${comment.likeCount}"></span>
                                 </button>
 
                                 <button data-toggle="collapse" th:data-target="${'#comment-' + comment.id}"
@@ -99,9 +93,8 @@
                                     <input type="text" class="form-control" placeholder="评论一下"
                                            th:id="${'input-'+comment.id}">
                                     <button type="button" class="btn btn-success pull-right"
-                                            onclick="comment2comment(this)"
-                                            th:data-id="${comment.id}">评论
-                                    </button>
+                                            th:data-id="${comment.id}"
+                                            onclick="comment2comment(this)">评论</button>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +144,7 @@
                 </div>
             </div>
             <hr class="col-lg-12 col-md-12 col-xs-12">
-            <!--相关推荐信息栏-->
+            <!--告示栏-->
             <div th:insert="~{notice :: notice}"></div>
             <hr class="col-lg-12 col-md-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-xs-12">

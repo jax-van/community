@@ -1,6 +1,7 @@
 package com.jaxvan.community.controller;
 
 import com.jaxvan.community.dto.NotificationDTO;
+import com.jaxvan.community.dto.ResponseDTO;
 import com.jaxvan.community.enums.NotificationTypeEnum;
 import com.jaxvan.community.model.User;
 import com.jaxvan.community.service.NotificationService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,5 +34,16 @@ public class NotificationController {
         } else {
             return "redirect:/";
         }
+    }
+
+    @GetMapping("/unread")
+    @ResponseBody
+    public Object getUnread(HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return "redirect:/";
+        }
+        int unreadCount = notificationService.getUnreadCount(user.getId());
+        return ResponseDTO.okOf(unreadCount);
     }
 }

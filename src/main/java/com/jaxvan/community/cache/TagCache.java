@@ -1,6 +1,7 @@
 package com.jaxvan.community.cache;
 
 import com.jaxvan.community.dto.TagDTO;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,12 +40,15 @@ public class TagCache {
     }
 
     public static String filterInvalid(String tags) {
+        String[] tagsSplit = StringUtils.split(tags);
         List<TagDTO> tagDTOs = get();
         List<String> tagList =
-                tagDTOs.stream().flatMap(tag -> tag.getTags().stream()).collect(Collectors.toList());
+                tagDTOs.stream().flatMap(tag -> tag.getTags().stream())
+                        .collect(Collectors.toList());
         String invalid =
-                Arrays.stream(tags.split(",")).filter(tag -> !tagList.contains(tag)).collect(Collectors.joining(","));
+                Arrays.stream(tagsSplit).filter(tag ->
+                        StringUtils.isBlank(tag) || !tagList.contains(tag))
+                        .collect(Collectors.joining(","));
         return invalid;
     }
-
 }

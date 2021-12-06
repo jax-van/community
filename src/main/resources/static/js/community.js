@@ -25,8 +25,7 @@ function comment2parent(parentId, type, content) {
                 if (response.code == 2003) {
                     let isAccepted = confirm(response.message);
                     if (isAccepted) {
-                        window.open("https://github.com/login/oauth/authorize?client_id=1accb29542174c46cbc9&redirect_uri=http://localhost:8080/callback&scope=user&state=1");
-                        window.localStorage.setItem("closable", "true");
+                        $('#myModal').modal({});
                     }
                 } else {
                     alert(response.message);
@@ -121,8 +120,41 @@ function selectTag(e) {
             //若value没有作为一个独立的标签出现过
             $("#tag").val(previous + ',' + value);
         }
-    }
-    else {
+    } else {
         $("#tag").val(value);
     }
 }
+
+function updateUnread() {
+    $.ajax({
+        url: "/unread",
+        success: function (response) {
+            let e = $("#notification");
+            e.text(response.data);
+        }
+    });
+}
+
+function giveALike(e) {
+    let commentId = $(e).attr("data-id");
+    $(e).toggleClass("active");
+    if (!$(e).hasClass("active")) {
+        commentId = -commentId;
+    }
+    $.ajax({
+        url: "/comment/giveALike/" + commentId,
+        type: "post",
+        success: function () {
+            let likeCountSpan = e.getElementsByTagName("span")[1];
+            let likeCount = $(likeCountSpan).text();
+            if (commentId < 0) {
+                likeCount--;
+            } else {
+                likeCount++;
+            }
+            $(likeCountSpan).text(likeCount);
+        }
+    });
+}
+
+let interval = setInterval("updateUnread()", 1000 * 5);

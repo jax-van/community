@@ -1,15 +1,15 @@
 package com.jaxvan.community.controller;
 
-import com.jaxvan.community.dto.AccessTokenDTO;
-import com.jaxvan.community.dto.GithubUser;
 import com.jaxvan.community.model.User;
-import com.jaxvan.community.provider.GithubProvider;
 import com.jaxvan.community.service.UserService;
+import com.jaxvan.community.strategy.LoginUserInfo;
+import com.jaxvan.community.strategy.UserStrategy;
+import com.jaxvan.community.strategy.UserStrategyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
@@ -17,52 +17,44 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
-@Slf4j
 @Controller
+@Slf4j
 public class AuthorizeController {
-
-    @Autowired
-    private GithubProvider githubProvider;
-
-    @Value("${github.client.id}")
-    private String clientId;
-
-    @Value("${github.client.secret}")
-    private String clientSecret;
-
-    @Value("${github.redirect.uri}")
-    private String redirectUri;
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/callback")
-    public String callback(@RequestParam(name = "code") String code,
-                           @RequestParam(name = "state") String state,
+    @Autowired
+    private UserStrategyFactory userStrategyFactory;
+
+    @GetMapping("/callback/{type}")
+    public String callback(@PathVariable(name = "type") String type,
+                           @RequestParam(name = "code") String code,
+                           @RequestParam(name = "state", required = false) String state,
                            HttpServletResponse response) {
-        AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
-        accessTokenDTO.setClient_id(clientId);
-        accessTokenDTO.setClient_secret(clientSecret);
-        accessTokenDTO.setCode(code);
-        accessTokenDTO.setRedirect_uri(redirectUri);
-        accessTokenDTO.setState(state);
-        String accessToken = githubProvider.getAccessToken(accessTokenDTO);
-        GithubUser githubUser = githubProvider.getUser(accessToken);
-        if (githubUser != null && githubUser.getId() != null) {
+        UserStrategy userStrategy = userStrategyFactory.getStrategy(type);
+        LoginUserInfo loginUserInfo = userStrategy.getUser(code, state);
+
+        // 浏览器 Cookie 存储 token，这样不用每次结束会话就要重新登录了
+        if (loginUserInfo != null && loginUserInfo.getId() != null) {
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
-            user.setName(githubUser.getName());
-            user.setAccountId(githubUser.getId().toString());
-            user.setAvatarUrl(githubUser.getAvatarUrl());
+            user.setName(loginUserInfo.getName());
+            user.setAccountId(loginUserInfo.getId().toString());
+            user.setAvatarUrl(loginUserInfo.getAvatarUrl());
+            user.setType(type);
             userService.createOrUpdateUser(user);
-            response.addCookie(new Cookie("token", token));
-
+            Cookie cookie = new Cookie("token", token);
+            cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            return "redirect:/";
         } else {
             // 登录失败
-            log.error("登录失败 {}", githubUser);
+            log.error("登录失败 {}", loginUserInfo);
+            return "redirect:/";
         }
-        return "redirect:/";
     }
 
     @GetMapping("/logout")

@@ -1,9 +1,9 @@
-package com.jaxvan.community.dto;
+package com.jaxvan.community.strategy;
 
 import lombok.Data;
 
 @Data
-public class GithubUser {
+public class LoginUserInfo {
 
     private String name;
     private Long id;

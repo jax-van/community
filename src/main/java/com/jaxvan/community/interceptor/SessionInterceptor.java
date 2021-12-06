@@ -25,13 +25,26 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
     private NotificationService notificationService;
 
+    @Value("${github.client.id}")
+    private String githubClientId;
+
     @Value("${github.redirect.uri}")
     private String githubRedirectUri;
+
+    @Value("${gitee.client.id}")
+    private String giteeClientId;
+
+    @Value("${gitee.redirect.uri}")
+    private String giteeRedirectUri;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 设置 context 级别的属性
-        request.getServletContext().setAttribute("githubRedirectUri", githubRedirectUri);
+        request.getServletContext().setAttribute("githubClientId", githubClientId);
+        request.getServletContext().setAttribute("githubRedirectUri", githubClientId);
+        request.getServletContext().setAttribute("giteeClientId", giteeClientId);
+        request.getServletContext().setAttribute("giteeRedirectUri", giteeRedirectUri);
+
         // 从 cookie 中拿到 token ，用来查到 user
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {

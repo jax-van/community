@@ -17,10 +17,18 @@
         <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
         <result column="COMMENT_COUNT" jdbcType="INTEGER" property="commentCount"/>
     </resultMap>
-    <update id="incrCommentCountByOne" parameterType="com.jaxvan.community.model.Comment">
+    <update id="incrCommentCountByOne" parameterType="long">
     update COMMENT
     set
     COMMENT_COUNT = COMMENT_COUNT + 1
     where id = #{id}
     </update>
+
+    <update id="incrLikeCount" parameterType="com.jaxvan.community.model.Comment">
+        update COMMENT
+        set
+            LIKE_COUNT = COMMENT.LIKE_COUNT + #{likeCount}
+        where id = #{id}
+    </update>
+
 </mapper>

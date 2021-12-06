@@ -44,8 +44,14 @@ public class CommentController {
 
     @GetMapping("/comment/{id}")
     public ResponseDTO comments(@PathVariable("id") Long id) {
-        List<CommentDTO> commentDTOS =
+        List<CommentDTO> commentDTOs =
                 commentService.listByParentId(id, CommentTypeEnum.COMMENT);
-        return ResponseDTO.okOf(commentDTOS);
+        return ResponseDTO.okOf(commentDTOs);
+    }
+
+    @PostMapping("/comment/giveALike/{id}")
+    public ResponseDTO giveALike(@PathVariable("id") Long id) {
+        commentService.incrLikeCount(id);
+        return ResponseDTO.okOf();
     }
 }
