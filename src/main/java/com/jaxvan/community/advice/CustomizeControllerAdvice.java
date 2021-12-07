@@ -5,8 +5,8 @@ import com.jaxvan.community.dto.ResponseDTO;
 import com.jaxvan.community.exception.CustomizeErrorCode;
 import com.jaxvan.community.exception.CustomizeException;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class CustomizeControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)

@@ -70,12 +70,6 @@
             <version>1.2.57</version>
         </dependency>
 
-        <!--<dependency>-->
-        <!--    <groupId>com.h2database</groupId>-->
-        <!--    <artifactId>h2</artifactId>-->
-        <!--    <version>1.4.199</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -116,9 +110,6 @@
                     <url>jdbc:mysql://localhost:3306/community?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8</url>
                     <user>root</user>
                     <password>123</password>
-                    <!--<url>jdbc:h2:~/community</url>-->
-                    <!--<user>sa</user>-->
-                    <!--<password>123</password>-->
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -126,11 +117,6 @@
                         <artifactId>mysql-connector-java</artifactId>
                         <version>5.1.45</version>
                     </dependency>
-                    <!--<dependency>-->
-                    <!--    <groupId>com.h2database</groupId>-->
-                    <!--    <artifactId>h2</artifactId>-->
-                    <!--    <version>1.4.199</version>-->
-                    <!--</dependency>-->
                 </dependencies>
             </plugin>
             <plugin>
@@ -143,11 +129,6 @@
                         <artifactId>mysql-connector-java</artifactId>
                         <version>5.1.45</version>
                     </dependency>
-                    <!--<dependency>-->
-                    <!--    <groupId>com.h2database</groupId>-->
-                    <!--    <artifactId>h2</artifactId>-->
-                    <!--    <version>1.4.199</version>-->
-                    <!--</dependency>-->
                 </dependencies>
             </plugin>
         </plugins>

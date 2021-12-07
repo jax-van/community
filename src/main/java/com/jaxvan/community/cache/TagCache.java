@@ -40,7 +40,7 @@ public class TagCache {
     }
 
     public static String filterInvalid(String tags) {
-        String[] tagsSplit = StringUtils.split(tags);
+        String[] tagsSplit = StringUtils.split(tags, ",");
         List<TagDTO> tagDTOs = get();
         List<String> tagList =
                 tagDTOs.stream().flatMap(tag -> tag.getTags().stream())

@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 @Controller
 public class FileController {
@@ -31,7 +30,7 @@ public class FileController {
             fileDTO.setMessage("上传成功");
             fileDTO.setUrl(upload);
             return fileDTO;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         fileDTO.setSuccess(0);
