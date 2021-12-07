@@ -3,6 +3,7 @@ package com.jaxvan.community.service;
 import com.jaxvan.community.dto.PaginationDTO;
 import com.jaxvan.community.dto.QuestionDTO;
 import com.jaxvan.community.dto.QuestionQueryDTO;
+import com.jaxvan.community.enums.SortTypeEnum;
 import com.jaxvan.community.exception.CustomizeErrorCode;
 import com.jaxvan.community.exception.CustomizeException;
 import com.jaxvan.community.mapper.QuestionExtMapper;
@@ -33,20 +34,32 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO list(String search, String tag, Integer page, Integer size) {
+    public PaginationDTO list(String search, String tag, String sort, Integer page, Integer size) {
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+
+        // 设置查询关键词
         if (StringUtils.isNotBlank(search)) {
             String[] keywords = StringUtils.split(search, " ");
             search = Arrays.stream(keywords).collect(Collectors.joining("|"));
         }
-
-        PaginationDTO paginationDTO = new PaginationDTO();
-        // 设置分页并得到总页数好进一步调整
-        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
         questionQueryDTO.setSearch(search);
-        questionQueryDTO.setTag(tag);
-        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
-        paginationDTO.setPagination(totalCount, page, size);
 
+        // 设置标签
+        questionQueryDTO.setTag(tag);
+
+        // 设置排序方式
+        for (SortTypeEnum sortTypeEnum : SortTypeEnum.values()) {
+            if (sortTypeEnum.name().toLowerCase().equals(sort)) {
+                questionQueryDTO.setSort(sort);
+                break;
+            }
+        }
+
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
+
+        // 设置分页并得到总页数好进一步调整
+        PaginationDTO paginationDTO = new PaginationDTO();
+        paginationDTO.setPagination(totalCount, page, size);
         // 越界调整
         if (page < 1) {
             page = 1;
@@ -74,6 +87,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
+
         return paginationDTO;
     }
 

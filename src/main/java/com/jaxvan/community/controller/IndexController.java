@@ -22,14 +22,17 @@ public class IndexController {
                         @RequestParam(value = "page", defaultValue = "1") Integer page,
                         @RequestParam(value = "size", defaultValue = "5") Integer size,
                         @RequestParam(value = "search", required = false) String search,
-                        @RequestParam(value = "tag", required = false) String tag) {
-        PaginationDTO pagination = questionService.list(search, tag, page, size);
+                        @RequestParam(value = "tag", required = false) String tag,
+                        @RequestParam(value = "sort", defaultValue = "new") String sort) {
+
+        PaginationDTO pagination = questionService.list(search, tag, sort, page, size);
         List<String> hotTags = HotTagCache.getHotTags();
         model.addAttribute("pagination", pagination);
         model.addAttribute("search", search);
 
         model.addAttribute("hotTags", hotTags);
         model.addAttribute("tag", tag);
+        model.addAttribute("sort", sort);
 
         return "index";
     }

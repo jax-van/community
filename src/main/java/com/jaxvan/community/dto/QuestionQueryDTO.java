@@ -8,4 +8,5 @@ public class QuestionQueryDTO {
     private int offset;
     private String search;
     private String tag;
+    private String sort;
 }

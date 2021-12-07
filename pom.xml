@@ -113,7 +113,7 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.2.4</version>
                 <configuration>
-                    <url>jdbc:mysql://localhost:3306/community?useSSL=false</url>
+                    <url>jdbc:mysql://localhost:3306/community?useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8</url>
                     <user>root</user>
                     <password>123</password>
                     <!--<url>jdbc:h2:~/community</url>-->

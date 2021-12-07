@@ -55,6 +55,7 @@
                 and tag regexp #{tag}
             </if>
         </where>
+
     </select>
 
     <select id="selectBySearch" parameterType="com.jaxvan.community.dto.QuestionQueryDTO"
@@ -68,7 +69,17 @@
                 and tag regexp #{tag}
             </if>
         </where>
-        order by gmt_create desc
+        <if test="sort != null and sort != ''">
+            <if test="sort == 'new'">
+                order by gmt_create desc
+            </if>
+            <if test="sort == 'hot'">
+                order by comment_count desc
+            </if>
+            <if test="sort == 'old'">
+                order by gmt_create
+            </if>
+        </if>
         limit #{size} offset #{offset}
     </select>
 </mapper>
